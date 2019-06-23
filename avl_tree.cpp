@@ -28,14 +28,17 @@ private:
         }
 
         static void update_parent(Node* children, Node* parent) {
-            if (children == nullptr)
+            if (children == nullptr) {
                 return;
+            }
+
             children->parent = parent;
         }
 
         static void update(Node* node) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return;
+            }
 
             update_parent(node->left, node);
             update_parent(node->right, node);
@@ -43,18 +46,21 @@ private:
         }
 
         static Node* right_rotation(Node* node) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return nullptr;
+            }
 
             Node* temp = node->left;
 
             node->left = temp->right;
-            if (node->left)
+            if (node->left) {
                 node->left->parent = node;
+            }
 
             temp->right = node;
-            if (temp->right)
+            if (temp->right) {
                 temp->right->parent = temp;
+            }
 
             update(temp);
             update(node);
@@ -63,18 +69,21 @@ private:
         }
 
         static Node* left_rotation(Node* node) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return nullptr;
+            }
 
             Node* temp = node->right;
 
             node->right = temp->left;
-            if (node->right)
+            if (node->right) {
                 node->right->parent = node;
+            }
 
             temp->left = node;
-            if (temp->left)
+            if (temp->left) {
                 temp->left->parent = temp;
+            }
 
             update(temp);
             update(node);
@@ -83,20 +92,23 @@ private:
         }
 
         static Node* balance(Node* node) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return nullptr;
+            }
 
             update(node);
 
             if (get_balance(node) == -2) {
-                if (get_balance(node->left) > 0)
+                if (get_balance(node->left) > 0) {
                     node->left = left_rotation(node->left);
+                }
                 return right_rotation(node);
             }
 
             if (get_balance(node) == 2) {
-                if (get_balance(node->right) < 0)
+                if (get_balance(node->right) < 0) {
                     node->right = right_rotation(node->right);
+                }
                 return left_rotation(node);
             }
 
@@ -104,8 +116,9 @@ private:
         }
 
         static Node* find(Node* node, const T& value) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return nullptr;
+            }
 
             if (value < node->key) {
                 return find(node->left, value);
@@ -117,8 +130,9 @@ private:
         }
 
         static Node* lower_bound(Node* node, const T& value) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return nullptr;
+            }
 
             if (node->key < value) {
                 return lower_bound(node->right, value);
@@ -133,8 +147,9 @@ private:
         }
 
         static Node* insert(Node* node, const T& value) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return new Node(value);
+            }
 
             if (value < node->key) {
                 node->left = insert(node->left, value);
@@ -148,8 +163,9 @@ private:
         static Node* get_min(Node* node) {
             Node* temp = node;
 
-            while (temp && temp->left != nullptr)
+            while (temp && temp->left != nullptr) {
                 temp = temp->left;
+            }
 
             return temp;
         }
@@ -157,26 +173,30 @@ private:
         static Node* get_max(Node* node) {
             Node* temp = node;
 
-            while (temp && temp->right != nullptr)
+            while (temp && temp->right != nullptr) {
                 temp = temp->right;
+            }
 
             return temp;
         }
 
         static Node* remove_min(Node* node) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return nullptr;
+            }
 
-            if (node->left == nullptr)
+            if (node->left == nullptr) {
                 return node->right;
+            }
 
             node->left = remove_min(node->left);
             return balance(node);
         }
 
         static Node* remove(Node* node, const T& value)  {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return nullptr;
+            }
 
             if (value < node->key) {
                 node->left = remove(node->left, value);
@@ -188,8 +208,9 @@ private:
 
                 delete node;
 
-                if (r == nullptr)
+                if (r == nullptr) {
                     return l;
+                }
 
                 Node* min = get_min(r);
                 min->right = remove_min(r);
@@ -201,13 +222,15 @@ private:
         }
 
         static Node* next(Node* node) {
-            if (node == nullptr)
+            if (node == nullptr) {
                 return node;
+            }
 
             if (node->right) {
                 Node *temp = node->right;
-                while (temp->left != nullptr)
+                while (temp->left != nullptr) {
                     temp = temp->left;
+                }
                 return temp;
             }
 
@@ -279,10 +302,11 @@ public:
 
         const iterator operator -- (int) {
             iterator temp = iterator(iter, root);
-            if (iter == nullptr)
+            if (iter == nullptr) {
                 iter = Node::get_max(root);
-            else
+            } else {
                 iter = Node::prev(iter);
+            }
             return temp;
         }
 
@@ -306,7 +330,7 @@ public:
     };
 
     Node* root = nullptr;
-    int sz = 0;
+    int element_count = 0;
 
     Set() = default;
 
@@ -330,8 +354,9 @@ public:
     }
 
     Set& operator = (const Set& other) {
-        if (this == &other)
+        if (this == &other) {
             return *this;
+        }
 
         del(root);
         root = nullptr;
@@ -344,9 +369,10 @@ public:
     }
 
     void del(Node* node) {
-        sz = 0;
-        if (node == nullptr)
+        element_count = 0;
+        if (node == nullptr) {
             return;
+        }
 
         del(node->left);
         del(node->right);
@@ -358,31 +384,33 @@ public:
     }
 
     size_t size() const {
-        return sz;
+        return element_count;
     }
 
     bool empty() const {
-        return sz == 0;
+        return element_count == 0;
     }
 
     void insert(const T& value) {
         if (Node::find(root, value) == nullptr) {
-            ++sz;
+            ++element_count;
             root = Node::insert(root, value);
         }
 
-        if (root != nullptr)
+        if (root != nullptr) {
             root->parent = nullptr;
+        }
     }
 
     void erase(const T& value) {
         if (Node::find(root, value) != nullptr) {
-            --sz;
+            --element_count;
             root = Node::remove(root, value);
         }
 
-        if (root != nullptr)
+        if (root != nullptr) {
             root->parent = nullptr;
+        }
     }
 
     void in_order() const {
